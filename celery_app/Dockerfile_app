@@ -1,0 +1,26 @@
+FROM python:2-alpine3.7
+
+
+COPY requirements_flask.txt /tmp/requirements_flask.txt
+
+RUN apk update && \
+  apk add --virtual .build-deps gcc python-dev musl-dev libxml2-dev libxml2 && \
+  apk add --no-cache libxslt-dev sqlite postgresql-dev postgresql-libs && \
+  pip install --prefer-binary -r /tmp/requirements_flask.txt && \
+  rm -r /root/.cache && \
+  apk del .build-deps
+
+
+COPY . /app
+RUN chmod +x /app/entrypoint.sh
+WORKDIR /app
+
+RUN pip install -e /app/core
+#
+# ENTRYPOINT [ '/bin/sh', "-c",'while true; do sleep 30; done;']
+
+# CMD ["python"]
+ENTRYPOINT ["/app/entrypoint.sh"]
+EXPOSE 5000
+CMD ["python","-u","main.py"]
+# CMD ["/bin/sh","-c","while true; do sleep 30; done;"]

@@ -1,0 +1,60 @@
+version: '3.3'
+
+services:
+
+   database:
+     image: postgres:10.5-alpine
+     restart: always
+     env_file: dev.env
+     ports:
+       - 5432:5432
+     volumes:
+       - $CRAWL_ROOT/db_data/:/var/lib/postgresql/data/
+
+
+   flask_app:
+     depends_on:
+       - rabbitmq
+       - migration
+     image: flask_app
+     env_file: dev.env
+     build:
+      context: ./../celery_app
+      dockerfile: Dockerfile_app
+     ports:
+       - 0:5000:5000
+     volumes:
+       - $CRAWL_ROOT/downloads/:/downloads
+   celery_worker:
+     depends_on:
+       - rabbitmq
+       - migration
+     image: celery_worker
+     env_file: dev.env
+     build:
+      context: ./../celery_app
+      dockerfile: Dockerfile_celery_worker
+     volumes:
+       - $CRAWL_ROOT/downloads/:/downloads
+
+   rabbitmq:
+     image: rabbitmq:3.7.8-management-alpine
+     ports:
+       - 15672:15672
+       # - 5672:5672
+
+   migration:
+     image: migrations
+     env_file: dev.env
+     build:
+        context: ./../celery_app
+        dockerfile: Dockerfile_migrations
+     links:
+       - database
+     depends_on:
+       - database
+     command: alembic upgrade head
+     # command: tail -f /dev/null
+     # volumes:
+       # - core:/usr/local/lib/python3.6/site-packages/billing_core
+       # - /home/waleed/work/youtube_crawler/migrations/:/app/migrations #TODO: mange permissions to allow read/write to this folder
