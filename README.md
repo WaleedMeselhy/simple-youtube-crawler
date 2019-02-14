@@ -1,11 +1,17 @@
 # YouTube crawler.
 
 **SQLAlchemy** as Object Relational Mapper
+
 **Alembic** for databse migration
+
 **Selenium** for scrapping youtube
+
 **Parsel** for extract data from XML/HTML
+
 **Celery**  for task management
+
 **Flask-RESTPlus** for building REST APIs
+
 **Schematics** for validating models
 ### Example
 
