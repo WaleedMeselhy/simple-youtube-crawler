@@ -19,7 +19,7 @@ services:
      image: flask_app
      env_file: dev.env
      build:
-      context: ./../celery_app
+      context: ./../youtube_crawler
       dockerfile: Dockerfile_app
      ports:
        - 0:5000:5000
@@ -32,7 +32,7 @@ services:
      image: celery_worker
      env_file: dev.env
      build:
-      context: ./../celery_app
+      context: ./../youtube_crawler
       dockerfile: Dockerfile_celery_worker
      volumes:
        - $CRAWL_ROOT/downloads/:/downloads
@@ -47,7 +47,7 @@ services:
      image: migrations
      env_file: dev.env
      build:
-        context: ./../celery_app
+        context: ./../youtube_crawler
         dockerfile: Dockerfile_migrations
      links:
        - database

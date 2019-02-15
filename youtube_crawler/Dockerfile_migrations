@@ -1,8 +1,7 @@
 FROM python:2-alpine3.7
 
 
-COPY requirements_flask.txt /tmp/requirements_flask.txt
-
+COPY ./migrations/requirements_flask.txt /tmp/requirements_flask.txt
 RUN apk update && \
   apk add --virtual .build-deps gcc python-dev musl-dev libxml2-dev libxml2 && \
   apk add --no-cache libxslt-dev sqlite postgresql-dev postgresql-libs && \
@@ -11,16 +10,18 @@ RUN apk update && \
   apk del .build-deps
 
 
-COPY . /app
-RUN chmod +x /app/entrypoint.sh
-WORKDIR /app
 
-RUN pip install -e /app/core
+COPY ./migrations/. /migrations
+COPY ./core /migrations/core
+RUN chmod +x /migrations/entrypoint.sh
+WORKDIR /migrations
+
+RUN pip install -e /migrations/core
 #
 # ENTRYPOINT [ '/bin/sh', "-c",'while true; do sleep 30; done;']
 
 # CMD ["python"]
-ENTRYPOINT ["/app/entrypoint.sh"]
-EXPOSE 5000
-CMD ["python","-u","main.py"]
+ENTRYPOINT ["/migrations/entrypoint.sh"]
+
+# CMD ["python","-u","main.py"]
 # CMD ["/bin/sh","-c","while true; do sleep 30; done;"]

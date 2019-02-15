@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from celery_factory import app as celery_app
+from celery import Celery
 import time
 import schedule
 import thread
@@ -7,7 +7,10 @@ from flask_restplus import Api, Resource, fields
 from flask import Flask, send_file
 from database_core.database.gateway import DBGateway
 from database_core.repositories import JobRepository, VideoRepository
-from database_core.factories import Video as VideoModel, Job as JobModel
+from database_core.factories import Job as JobModel
+
+celery_app = Celery(
+    'youtube_crawler', broker='amqp://rabbitmq', backend='rpc://')
 
 
 def run_periodic():

@@ -1,0 +1,11 @@
+flask-restplus
+celery
+schedule
+parsel
+selenium
+schematics==2.1.0
+SQLAlchemy==1.2.11
+psycopg2==2.7.3.1
+alembic==1.0.0
+sqlalchemy-utils==0.33.3
+requests
