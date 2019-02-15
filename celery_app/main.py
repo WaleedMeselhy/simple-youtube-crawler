@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from tasks import parse_url_task
+from celery_factory import app as celery_app
 import time
 import schedule
 import thread
@@ -17,7 +17,12 @@ def run_periodic():
 
 
 def run_task(url, job_id):
-    parse_url_task.delay(url, job_id)
+    # parse_url_task.delay(url, job_id)
+    celery_app.send_task(
+        'parse_url_task', kwargs={
+            'url': url,
+            'job_id': job_id
+        })
 
 
 flask_app = Flask(__name__)

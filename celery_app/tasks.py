@@ -4,7 +4,7 @@ from celery_factory import app
 from parser import parser
 
 
-@app.task
+@app.task(name='parse_url_task')
 def parse_url_task(url, job_id):
     print('start task')
     parser.parse_url(url, job_id)
